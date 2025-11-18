@@ -42,6 +42,8 @@ import com.android.billingclient.api.ProductDetails.SubscriptionOfferDetails;
 import com.android.billingclient.api.ProductDetails.InstallmentPlanDetails;
 import com.android.billingclient.api.ProductDetails.PricingPhases;
 import com.android.billingclient.api.ProductDetails.PricingPhase;
+import com.android.billingclient.api.UnfetchedProduct;
+import com.android.billingclient.api.QueryProductDetailsResult;
 
 import java.util.List;
 import java.util.HashMap;
@@ -58,6 +60,20 @@ public class GooglePlayBillingUtils {
 			allProductDetailsByProductId.put(productId, productDetails);
 		}
 	}
+
+	public static void addUnfetchedProductsByProductId(List<UnfetchedProduct> unfetchedProductList, HashMap<String, UnfetchedProduct> unfetchedProductMap) {
+		if (unfetchedProductList == null) {
+			return;
+		}
+
+		for (int i = 0; i < unfetchedProductList.size(); i++) {
+			UnfetchedProduct unfetchedProduct = unfetchedProductList.get(i);
+			String productId = unfetchedProduct.getProductId();
+
+			unfetchedProductMap.put(productId, unfetchedProduct);
+		}
+	}
+
 	public static void addPurchasesByPurchaseToken(List<Purchase> allPurchases, HashMap<String, Purchase> allPurchasesByPurchaseToken) {
 		if (allPurchases == null) return;
 
@@ -101,6 +117,33 @@ public class GooglePlayBillingUtils {
 
 		return allDictionaries;
 	}
+
+	public static Object[] convertFromProductDetailsList(List<ProductDetails> productDetailsList) {
+		if (productDetailsList == null) {
+			return new Object[0];
+		}
+
+		Object[] dictionaryArray = new Object[productDetailsList.size()];
+
+		for (int i = 0; i < dictionaryArray.length; i++) {
+			dictionaryArray[i] = convertFromProductDetails(productDetailsList.get(i));
+		}
+
+		return dictionaryArray;
+	}
+
+	public static Object[] convertFromUnfetchedProductMap(HashMap<String, UnfetchedProduct> unfetchedProductMap) {
+		Object[] unfetchedProductDictionaryArray = new Object[unfetchedProductMap.size()];
+		int i = 0;
+
+		for (Map.Entry<String, UnfetchedProduct> entry : unfetchedProductMap.entrySet()) {
+			unfetchedProductDictionaryArray[i] = convertFromUnfetchedProduct(entry.getValue());
+			i++;
+		}
+
+		return unfetchedProductDictionaryArray;
+	}
+
 	public static Dictionary convertFromProductDetails(ProductDetails productDetails) {
 		Dictionary dictionary = new Dictionary();
 
@@ -267,6 +310,47 @@ public class GooglePlayBillingUtils {
 
 		dictionary.put("products", pendingPurchaseUpdate.getProducts().toArray()); // String[]
 		dictionary.put("purchase_token", pendingPurchaseUpdate.getPurchaseToken()); // String
+		return dictionary;
+	}
+
+	public static Dictionary convertFromUnfetchedProduct(UnfetchedProduct unfetchedProduct) {
+		Dictionary dictionary = new Dictionary();
+
+		if (unfetchedProduct == null) {
+			return dictionary;
+		}
+
+		dictionary.put("product_id", unfetchedProduct.getProductId()); // String
+		dictionary.put("product_type", unfetchedProduct.getProductType()); // String
+		dictionary.put("status_code", unfetchedProduct.getStatusCode()); // int
+
+		return dictionary;
+	}
+
+	public static Object[] convertFromUnfetchedProductList(List<UnfetchedProduct> unfetchedProductList) {
+		if (unfetchedProductList == null) {
+			return new Object[0];
+		}
+
+		Object[] unfetchedProductDictionaryArray = new Object[unfetchedProductList.size()];
+
+		for (int i = 0; i < unfetchedProductDictionaryArray.length; i++) {
+			unfetchedProductDictionaryArray[i] = convertFromUnfetchedProduct(unfetchedProductList.get(i));
+		}
+
+		return unfetchedProductDictionaryArray; // appears as Godot.Collections.Array
+	}
+
+	public static Dictionary convertFromQueryProductDetailsResult(QueryProductDetailsResult queryProductDetailsResult) {
+		Dictionary dictionary = new Dictionary();
+
+		if (queryProductDetailsResult == null) {
+			return dictionary;
+		}
+
+		dictionary.put("product_details_list", convertFromProductDetailsList(queryProductDetailsResult.getProductDetailsList())); // Array of Godot Dictionaries
+		dictionary.put("unfetched_product_list", convertFromUnfetchedProductList(queryProductDetailsResult.getUnfetchedProductList())); // Array of Godot Dictionaries
+
 		return dictionary;
 	}
 }

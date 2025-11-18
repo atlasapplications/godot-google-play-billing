@@ -2,19 +2,20 @@ plugins {
     id 'com.android.library'
 }
 
-ext.pluginVersionCode = 5
-ext.pluginVersionName = "3.0.0"
+ext.pluginVersionCode = 7
+ext.pluginVersionName = "5.0.0"
 
 android {
-    compileSdk 33
-    buildToolsVersion "30.0.3"
+    compileSdk 35
+    buildToolsVersion '35.0.0'
 
     defaultConfig {
-        minSdk 24
-        targetSdk 33
+        minSdk 29
+        targetSdk 35
         versionCode pluginVersionCode
         versionName pluginVersionName
     }
+    ndkVersion '28.1.13356709'
 
     libraryVariants.all { variant ->
         variant.outputs.all { output ->
@@ -24,7 +25,6 @@ android {
 }
 
 dependencies {
-    implementation "androidx.legacy:legacy-support-v4:1.0.0"
-    implementation 'com.android.billingclient:billing:7.0.0'
-    compileOnly fileTree(dir: 'libs', include: ['godot-lib*.aar'])
+    implementation 'com.android.billingclient:billing:8.1.0'
+    compileOnly fileTree(dir: 'libs', include: ['godot-lib.4.5.1.stable.template_release*.aar'])
 }
