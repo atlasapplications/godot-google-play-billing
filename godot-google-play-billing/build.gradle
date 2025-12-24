@@ -6,7 +6,7 @@ ext.pluginVersionCode = 7
 ext.pluginVersionName = "5.0.0"
 
 android {
-    namespace "com.android.library"
+    namespace "org.godotengine.godot.plugin.googleplaybilling"
     compileSdk 35
     buildToolsVersion '35.0.0'
 
