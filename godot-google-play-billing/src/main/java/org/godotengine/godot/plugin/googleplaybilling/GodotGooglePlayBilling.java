@@ -140,6 +140,11 @@ public class GodotGooglePlayBilling extends GodotPlugin {
 		}
 		@Override
 		public void onBillingSetupFinished(BillingResult billingResult) {
+			if (billingResult == null) {
+				billingClientAvailable = false;
+				return;
+			}
+
 			if (billingResult.getResponseCode() == BillingClient.BillingResponseCode.OK) {
 				billingClientAvailable = true;
 			} else {
